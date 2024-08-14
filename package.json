@@ -1,7 +1,7 @@
 {
-  "name": "sx-community-api",
-  "version": "1.0.0",
-  "description": "sx-community API",
+  "name": "sx-community-data",
+  "version": "1.0.1",
+  "description": "sx-community data",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -19,6 +19,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/zungx/sx-community-api"
+    "url": "https://github.com/zungx/sx-community-data"
   }
 }
