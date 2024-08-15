@@ -24,6 +24,7 @@ export interface MasterData {
     club: SubCategory[];
     gender: SubCategory[];
     joiningyear: SubCategory[];
+    office: SubCategory[];
 }
 export interface Employee {
     id: string;
@@ -44,6 +45,7 @@ export interface Employee {
     yearofbirth: string;
     monthofbirth: string;
     joiningyear: string;
+    short_name: string;
 }
 export declare function getGoogleAuthCredentials(): Auth.GoogleAuth;
 export declare function getPhotoCdn(photos: Map<string, string>, key: string): string;
@@ -54,3 +56,4 @@ export declare function masterDataAPI(req: any, res: any, param: ApiParam): Prom
 export declare function getMasterDataSource(param: ApiParam): Promise<MasterData>;
 export declare function filterCategory(categoryKey: string, apiMasterData: MasterData): SubCategory[];
 export declare function filterEmployee(categoryKey: string, filterValue: string, apiEmployees: Employee[]): Employee[];
+export declare const fetchApis: (apiKey: string) => Promise<[Employee[], MasterData] | null>;

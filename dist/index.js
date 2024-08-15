@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.fetchApis = void 0;
 exports.getGoogleAuthCredentials = getGoogleAuthCredentials;
 exports.getPhotoCdn = getPhotoCdn;
 exports.listFilesInFolder = listFilesInFolder;
@@ -90,14 +91,14 @@ async function getAllEmployees(param) {
         }
         const [headers, ...dataRows] = rows;
         return dataRows.map(row => headers.reduce((employee, header, index) => {
-            var _a, _b;
+            var _a, _b, _c;
             switch (header) {
                 case 'photo':
                     employee[header] = getPhotoCdn(photos, row[index]);
                     break;
                 case 'projects':
                 case 'club':
-                    employee[header] = (_b = (_a = row[index]) === null || _a === void 0 ? void 0 : _a.split(',')) !== null && _b !== void 0 ? _b : [];
+                    employee[header] = (_c = (_b = (_a = row[index]) === null || _a === void 0 ? void 0 : _a.split(',')) === null || _b === void 0 ? void 0 : _b.map((it) => it.trim())) !== null && _c !== void 0 ? _c : [];
                     break;
                 case 'dob':
                     const dobValue = row[index] || '';
@@ -155,6 +156,7 @@ async function getMasterDataSource(param) {
             club: [],
             gender: [],
             joiningyear: [],
+            office: []
         };
         const response = await sheets.spreadsheets.values.get({
             spreadsheetId: param.spreadsheetId,
@@ -186,6 +188,8 @@ async function getMasterDataSource(param) {
                 result.gender.push({ title: row[25], photo: getPhotoCdn(photos, row[26]) });
             if (row[28])
                 result.joiningyear.push({ title: row[28], photo: getPhotoCdn(photos, row[29]) });
+            if (row[31])
+                result.office.push({ title: row[31], photo: getPhotoCdn(photos, row[32]) });
         });
         return result;
     }
@@ -208,3 +212,47 @@ function filterEmployee(categoryKey, filterValue, apiEmployees) {
             return apiEmployees.filter((it) => it[key] === filterValue);
     }
 }
+const fetchApis = async (apiKey) => {
+    try {
+        const [employeesResponse, masterDataResponse] = await Promise.all([
+            fetch('/api/employee', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-secret-key': apiKey
+                }
+            }),
+            fetch('/api/master-data', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-secret-key': apiKey
+                }
+            }),
+        ]);
+        const employees = await handleResponse(employeesResponse);
+        const masterData = await handleResponse(masterDataResponse);
+        return [employees, masterData];
+    }
+    catch (error) {
+        console.error('An error occurred:', error);
+        return null;
+    }
+};
+exports.fetchApis = fetchApis;
+const handleResponse = async (response) => {
+    if (!response.ok) {
+        const errorData = await response.json();
+        if (response.status === 401) {
+            throw new Error(`Unauthorized: ${errorData.error_message}`);
+        }
+        else if (response.status === 500) {
+            throw new Error(`Internal Server Error: ${errorData.error_message}`);
+        }
+        else {
+            throw new Error(`Error: ${errorData.error_message}`);
+        }
+    }
+    const data = await response.json();
+    return data;
+};

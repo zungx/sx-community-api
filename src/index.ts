@@ -28,6 +28,7 @@ export interface MasterData {
   club: SubCategory[];
   gender: SubCategory[];
   joiningyear: SubCategory[];
+  office: SubCategory[];
 }
 
 export interface Employee {
@@ -49,6 +50,7 @@ export interface Employee {
   yearofbirth: string;
   monthofbirth: string;
   joiningyear: string;
+  short_name: string;
 }
 
 export function getGoogleAuthCredentials(): Auth.GoogleAuth {
@@ -147,7 +149,7 @@ export async function getAllEmployees(param: ApiParam): Promise<Employee[]> {
             break;
           case 'projects':
           case 'club':
-            employee[header] = row[index]?.split(',') ?? [];
+            employee[header] = row[index]?.split(',')?.map((it: any) => it.trim()) ?? [];
             break;
           case 'dob':
             const dobValue = row[index] || '';
@@ -207,6 +209,7 @@ export async function getMasterDataSource(param: ApiParam): Promise<MasterData> 
       club: [],
       gender: [],
       joiningyear: [],
+      office: []
     };
 
     const response = await sheets.spreadsheets.values.get({
@@ -231,6 +234,7 @@ export async function getMasterDataSource(param: ApiParam): Promise<MasterData> 
       if (row[22]) result.club.push({ title: row[22], photo: getPhotoCdn(photos, row[23]) });
       if (row[25]) result.gender.push({ title: row[25], photo: getPhotoCdn(photos, row[26]) });
       if (row[28]) result.joiningyear.push({ title: row[28], photo: getPhotoCdn(photos, row[29]) });
+      if (row[31]) result.office.push({ title: row[31], photo: getPhotoCdn(photos, row[32]) });
     });
 
     return result;
@@ -256,5 +260,50 @@ export function filterEmployee(categoryKey: string, filterValue: string, apiEmpl
   } 
 }
 
+interface ApiErrorResponse {
+  error_code: string;
+  error_message: string;
+}
 
+export const fetchApis = async (apiKey: string): Promise<[Employee[], MasterData] | null> => {
+  try {
+    const [employeesResponse, masterDataResponse] = await Promise.all([
+      fetch('/api/employee', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-secret-key': apiKey
+        }
+      }),
+      fetch('/api/master-data', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-secret-key': apiKey
+        }
+      }),
+    ]);
+    const employees = await handleResponse<Employee[]>(employeesResponse);
+    const masterData = await handleResponse<MasterData>(masterDataResponse);
 
+    return [employees, masterData];
+  } catch (error) {
+    console.error('An error occurred:', error);
+    return null;
+  }
+};
+
+const handleResponse = async <T>(response: Response): Promise<T> => {
+  if (!response.ok) {
+    const errorData: ApiErrorResponse = await response.json();
+    if (response.status === 401) {
+      throw new Error(`Unauthorized: ${errorData.error_message}`);
+    } else if (response.status === 500) {
+      throw new Error(`Internal Server Error: ${errorData.error_message}`);
+    } else {
+      throw new Error(`Error: ${errorData.error_message}`);
+    }
+  }
+  const data: T = await response.json();
+  return data;
+};
