@@ -18,7 +18,7 @@ GOOGLE_CREDENTIAL_CLIENT_ID=
 
 ```
 
-2. Create new file employee.ts inside folder `app/api/employee/route.ts` and update the code like this
+2. Create new file route.ts inside folder `app/api/employee/route.ts` and update the code like this
 ```
 import { type NextRequest, NextResponse } from 'next/server'
 import { getAllEmployees } from 'sx-community-data';
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 }
 ```
 
-3. Create new file master-data.ts inside folder `pages/api/master-data/route.ts` and update the code like this
+3. Create new file route.ts inside folder `pages/api/master-data/route.ts` and update the code like this
 ```
 export async function GET(request: NextRequest) {
   try {
