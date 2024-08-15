@@ -153,7 +153,7 @@ export async function getMasterDataSource(param: ApiParam): Promise<MasterData> 
       birthplace: [],
       yearofbirth: [],
       monthofbirth: [],
-      project: [],
+      projects: [],
       club: [],
       gender: [],
       joiningyear: [],
@@ -178,7 +178,7 @@ export async function getMasterDataSource(param: ApiParam): Promise<MasterData> 
       if (row[10]) result.birthplace.push({ title: row[10], photo: getPhotoCdn(photos, row[11]) });
       if (row[13]) result.yearofbirth.push({ title: row[13], photo: getPhotoCdn(photos, row[14]) });
       if (row[16]) result.monthofbirth.push({ title: row[16], photo: getPhotoCdn(photos, row[17]) });
-      if (row[19]) result.project.push({ title: row[19], photo: getPhotoCdn(photos, row[20]) });
+      if (row[19]) result.projects.push({ title: row[19], photo: getPhotoCdn(photos, row[20]) });
       if (row[22]) result.club.push({ title: row[22], photo: getPhotoCdn(photos, row[23]) });
       if (row[25]) result.gender.push({ title: row[25], photo: getPhotoCdn(photos, row[26]) });
       if (row[28]) result.joiningyear.push({ title: row[28], photo: getPhotoCdn(photos, row[29]) });

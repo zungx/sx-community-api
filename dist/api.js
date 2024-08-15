@@ -149,7 +149,7 @@ async function getMasterDataSource(param) {
             birthplace: [],
             yearofbirth: [],
             monthofbirth: [],
-            project: [],
+            projects: [],
             club: [],
             gender: [],
             joiningyear: [],
@@ -178,7 +178,7 @@ async function getMasterDataSource(param) {
             if (row[16])
                 result.monthofbirth.push({ title: row[16], photo: getPhotoCdn(photos, row[17]) });
             if (row[19])
-                result.project.push({ title: row[19], photo: getPhotoCdn(photos, row[20]) });
+                result.projects.push({ title: row[19], photo: getPhotoCdn(photos, row[20]) });
             if (row[22])
                 result.club.push({ title: row[22], photo: getPhotoCdn(photos, row[23]) });
             if (row[25])

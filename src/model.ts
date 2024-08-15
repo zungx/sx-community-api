@@ -23,7 +23,7 @@ export interface MasterData {
   birthplace: SubCategory[];
   yearofbirth: SubCategory[];
   monthofbirth: SubCategory[];
-  project: SubCategory[];
+  projects: SubCategory[];
   club: SubCategory[];
   gender: SubCategory[];
   joiningyear: SubCategory[];
