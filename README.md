@@ -98,9 +98,26 @@ TODO: fetch/parse response/ handle error
 
 ## Common function
 
+### Filter Subcategory
+```
+export function filterCategory(categoryKey: string, apiMasterData: MasterData): SubCategory[] {
+  const key = categoryKey as keyof MasterData;
+  return apiMasterData[key];
+}
+```
+
 ### Filter employee by sub category
 ```
-const employees = filterEmployee(categoryKey, value, apiResponse);
+export function filterEmployee(categoryKey: string, filterValue: string, apiEmployees: Employee[]): Employee[] {
+  const key = categoryKey as keyof Employee;
+  switch(key) {
+    case 'club':
+    case 'projects':
+      return apiEmployees.filter((it) => it[key]?.includes(filterValue));
+    default:
+      return apiEmployees.filter((it) => it[key] === filterValue);
+  } 
+}
 ```
 
 
